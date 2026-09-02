@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  html, body { margin:0; padding:0; background:rgb(243,240,231); -webkit-font-smoothing:antialiased; }
+  * { box-sizing:border-box; }
+  a { color:rgb(11,51,46); text-decoration:underline; text-underline-offset:3px; }
+  a:hover { color:rgb(255,110,58); }
+  input, textarea, button { font:inherit; }
+  input:focus-visible, textarea:focus-visible, button:focus-visible { outline:2px solid rgb(30,30,30); outline-offset:2px; }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+  @keyframes spin { to { transform:rotate(360deg); } }
+</style>
+</helmet>
+<div style="min-height:100dvh; display:flex; flex-direction:column; background:rgb(243,240,231); font-family:'Suisse Intl','Helvetica Neue',Helvetica,Arial,sans-serif; color:rgb(30,30,30);">
+
+  <header style="display:flex; align-items:center; justify-content:space-between; gap:16px; padding:20px clamp(20px,5vw,64px); background:rgb(23,23,23); color:rgb(248,246,242); flex-shrink:0;">
+    <div style="display:flex; flex-direction:column; gap:2px;">
+      <span style="display:flex; align-items:center; gap:8px; font-size:13px; line-height:16px; letter-spacing:0.06em; text-transform:uppercase; color:rgb(153,168,164);"><span style="width:16px; height:16px; flex-shrink:0; background:rgb(100,227,180); -webkit-mask:url(assets/shape-07.svg) center/contain no-repeat; mask:url(assets/shape-07.svg) center/contain no-repeat;"></span>Campfire</span>
+      <span style="font-family:'Uxum',Optima,'Gill Sans','Segoe UI',sans-serif; font-size:20px; line-height:24px;">IA OAG Strategy</span>
+    </div>
+    <div style="display:flex; align-items:center; gap:16px;">
+      <sc-if value="{{ isAdmin }}" hint-placeholder-val="{{ false }}">
+        <button type="button" onClick="{{ downloadCsv }}" style="border:1px solid rgb(120,118,114); border-radius:100px; padding:8px 16px; background:none; color:rgb(248,246,242); font-size:14px; line-height:20px; cursor:pointer; transition:background 160ms ease;" style-hover="background:rgb(49,49,48);">Descargar respuestas ({{ totalRespuestas }})</button>
+      </sc-if>
+      <span style="display:flex; align-items:center; gap:8px; font-size:14px; line-height:20px; color:rgb(153,168,164);">
+        <span style="width:8px; height:8px; border-radius:50%; background:rgb(100,227,180);"></span>2 min
+      </span>
+    </div>
+  </header>
+
+  <sc-if value="{{ isWelcome }}" hint-placeholder-val="{{ true }}">
+    <main style="position:relative; overflow:hidden; flex:1; display:flex; align-items:center; justify-content:center; padding:clamp(32px,7vw,96px) clamp(20px,5vw,64px);">
+      <span style="position:absolute; top:clamp(-90px,-6vw,-40px); right:clamp(-120px,-8vw,-60px); width:clamp(200px,32vw,420px); height:clamp(200px,32vw,420px); background:rgb(255,110,58); opacity:0.22; pointer-events:none; -webkit-mask:url(assets/shape-07.svg) center/contain no-repeat; mask:url(assets/shape-07.svg) center/contain no-repeat;"></span>
+      <span style="position:absolute; bottom:-70px; left:-60px; width:clamp(140px,18vw,220px); height:clamp(140px,18vw,220px); background:rgb(100,227,180); opacity:0.3; pointer-events:none; -webkit-mask:url(assets/shape-07.svg) center/contain no-repeat; mask:url(assets/shape-07.svg) center/contain no-repeat;"></span>
+      <div style="position:relative; z-index:1; width:100%; max-width:660px; display:flex; flex-direction:column; gap:32px; animation:fadeUp 420ms ease both;">
+        <h1 style="margin:0; font-family:'Uxum',Optima,'Gill Sans','Segoe UI',sans-serif; font-weight:400; font-size:clamp(40px,8vw,80px); line-height:1.08; letter-spacing:-0.01em; color:rgb(11,51,46); text-wrap:pretty;">IA OAG Strategy</h1>
+        <p style="margin:0; font-size:18px; line-height:28px; max-width:52ch; color:rgb(72,71,69); text-wrap:pretty;">Estamos mapeando la visión y las habilidades de IA que ya tenemos dentro de la compañía. Con ese punto de partida podemos empezar a activarnos y decidir dónde poner el foco los próximos meses.</p>
+        <p style="margin:0; font-size:18px; line-height:28px; max-width:52ch; color:rgb(72,71,69); text-wrap:pretty;">Contesta solo lo que te apetezca. Todo es anónimo.</p>
+        <div style="height:1px; background:rgb(232,229,220);"></div>
+        <ul style="margin:0; padding:0; list-style:none; display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:20px;">
+          <li style="display:flex; flex-direction:column; gap:6px;"><span style="font-family:'Uxum',Optima,'Gill Sans','Segoe UI',sans-serif; font-size:32px; line-height:40px; color:rgb(11,51,46);">01</span><span style="font-size:14px; line-height:20px; color:rgb(72,71,69);">Tu nivel de uso de IA hoy</span></li>
+          <li style="display:flex; flex-direction:column; gap:6px;"><span style="font-family:'Uxum',Optima,'Gill Sans','Segoe UI',sans-serif; font-size:32px; line-height:40px; color:rgb(11,51,46);">02</span><span style="font-size:14px; line-height:20px; color:rgb(72,71,69);">Dónde ves oportunidad</span></li>
+          <li style="display:flex; flex-direction:column; gap:6px;"><span style="font-family:'Uxum',Optima,'Gill Sans','Segoe UI',sans-serif; font-size:32px; line-height:40px; color:rgb(11,51,46);">03</span><span style="font-size:14px; line-height:20px; color:rgb(72,71,69);">Qué necesitas para activarte</span></li>
+        </ul>
+        <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:center;">
+          <button type="button" onClick="{{ start }}" style="border:none; border-radius:100px; padding:16px 32px; background:rgb(30,30,30); color:rgb(254,251,241); font-size:16px; line-height:24px; cursor:pointer; transition:background 160ms ease, transform 160ms ease;" style-hover="background:rgb(11,51,46); transform:translateY(-1px);">Empezar</button>
+        </div>
+      </div>
+    </main>
+  </sc-if>
+
+  <sc-if value="{{ isForm }}" hint-placeholder-val="{{ false }}">
+    <main style="flex:1; display:flex; flex-direction:column; align-items:center; padding:0 clamp(20px,5vw,64px) 40px;">
+      <div style="width:100%; max-width:680px; display:flex; flex-direction:column; gap:28px;">
+
+        <div style="position:sticky; top:0; z-index:2; background:rgb(243,240,231); padding:24px 0 16px; display:flex; flex-direction:column; gap:10px;">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:12px; font-size:14px; line-height:20px; color:rgb(94,94,91);">
+            <span>Bloque {{ stepLabel }} de 4</span>
+            <span>{{ progressLabel }}</span>
+          </div>
+          <div style="height:4px; border-radius:100px; background:rgb(232,229,220); overflow:hidden;">
+            <div style="height:100%; width:{{ progressWidth }}; background:rgb(11,51,46); border-radius:100px; transition:width 320ms cubic-bezier(.2,.7,.3,1);"></div>
+          </div>
+        </div>
+
+        <sc-if value="{{ isStep1 }}" hint-placeholder-val="{{ true }}">
+          <section style="display:flex; flex-direction:column; gap:20px; animation:fadeUp 320ms ease both;">
+            <h2 style="margin:0; font-family:'Uxum',Optima,'Gill Sans','Segoe UI',sans-serif; font-weight:400; font-size:clamp(28px,5vw,40px); line-height:1.15; color:rgb(11,51,46); text-wrap:pretty;">¿Qué nivel de interés tienes hacia la IA?</h2>
+            <div style="display:flex; flex-direction:column; gap:12px;">
+              <span style="font-size:14px; line-height:20px; letter-spacing:0.06em; text-transform:uppercase; color:rgb(94,94,91);">Tu equipo</span>
+              <div style="display:flex; flex-wrap:wrap; gap:10px;">
+                <sc-for list="{{ equipoOpts }}" as="e" hint-placeholder-count="5">
+                  <button type="button" onClick="{{ e.onClick }}" style="border-radius:100px; padding:12px 20px; min-height:48px; cursor:pointer; font-size:16px; line-height:24px; transition:all 160ms ease; background:{{ e.bg }}; color:{{ e.fg }}; border:1px solid {{ e.bd }};" onMouseEnter="{{ e.onEnter }}" onMouseLeave="{{ e.onLeave }}">{{ e.label }}</button>
+                </sc-for>
+              </div>
+            </div>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(64px,1fr)); gap:10px;">
+              <sc-for list="{{ interesOpts }}" as="o" hint-placeholder-count="5">
+                <button type="button" onClick="{{ o.onClick }}" style="min-height:64px; border-radius:12px; cursor:pointer; font-family:'Uxum',Optima,'Gill Sans','Segoe UI',sans-serif; font-size:24px; line-height:32px; transition:all 160ms ease; background:{{ o.bg }}; color:{{ o.fg }}; border:1px solid {{ o.bd }};" onMouseEnter="{{ o.onEnter }}" onMouseLeave="{{ o.onLeave }}">{{ o.value }}</button>
+              </sc-for>
+            </div>
+            <div style="display:flex; justify-content:space-between; font-size:14px; line-height:20px; color:rgb(94,94,91);"><span>Poco interés</span><span>Mucho interés</span></div>
+          </section>
+        </sc-if>
+
+        <sc-if value="{{ isStep2 }}" hint-placeholder-val="{{ false }}">
+          <section style="display:flex; flex-direction:column; gap:20px; animation:fadeUp 320ms ease both;">
+            <h2 style="margin:0; font-family:'Uxum',Optima,'Gill Sans','Segoe UI',sans-serif; font-weight:400; font-size:clamp(28px,5vw,40px); line-height:1.15; color:rgb(11,51,46); text-wrap:pretty;">¿Qué has hecho ya con IA?</h2>
+            <p style="margin:0; font-size:16px; line-height:24px; color:rgb(72,71,69);">Añade un caso de uso cada vez y márcalo como personal o de cliente. Puedes añadir todos los que quieras.</p>
+
+            <sc-for list="{{ casos }}" as="c" hint-placeholder-count="0">
+              <div style="display:flex; gap:12px; align-items:flex-start; border:1px solid rgb(232,229,220); border-radius:14px; background:rgb(254,251,241); padding:16px;">
+                <span style="flex-shrink:0; border-radius:100px; padding:4px 12px; font-size:13px; line-height:20px; background:{{ c.tagBg }}; color:{{ c.tagFg }};">{{ c.tag }}</span>
+                <span style="flex:1; font-size:16px; line-height:24px; color:rgb(30,30,30); overflow-wrap:anywhere;">{{ c.texto }}</span>
+                <button type="button" onClick="{{ c.onRemove }}" aria-label="Eliminar" style="flex-shrink:0; border:none; background:none; cursor:pointer; font-size:18px; line-height:24px; color:rgb(94,94,91); padding:0 4px; transition:color 160ms ease;" style-hover="color:rgb(139,41,42);">×</button>
+              </div>
+            </sc-for>
+
+            <div style="display:flex; flex-direction:column; gap:12px; border:1px dashed rgb(187,185,178); border-radius:14px; padding:16px; background:rgb(254,251,241);">
+              <textarea rows="3" value="{{ draftTexto }}" onChange="{{ onDraftTexto }}" placeholder="Ej. resumir entrevistas de research y sacar patrones" style="width:100%; resize:vertical; padding:14px 16px; border-radius:10px; border:1px solid rgb(232,229,220); background:rgb(255,255,255); font-size:16px; line-height:24px; color:rgb(30,30,30);"></textarea>
+              <div style="display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between;">
+                <div style="display:flex; flex-wrap:wrap; gap:8px;">
+                  <sc-for list="{{ tagOpts }}" as="t" hint-placeholder-count="2">
+                    <button type="button" onClick="{{ t.onClick }}" style="border-radius:100px; padding:10px 16px; min-height:44px; cursor:pointer; font-size:15px; line-height:24px; transition:all 160ms ease; background:{{ t.bg }}; color:{{ t.fg }}; border:1px solid {{ t.bd }};" onMouseEnter="{{ t.onEnter }}" onMouseLeave="{{ t.onLeave }}">{{ t.label }}</button>
+                  </sc-for>
+                </div>
+                <button type="button" onClick="{{ addCaso }}" style="border:none; border-radius:100px; padding:12px 22px; min-height:44px; background:rgb(11,51,46); color:rgb(254,251,241); font-size:15px; line-height:20px; cursor:pointer; transition:background 160ms ease;" style-hover="background:rgb(30,30,30);">Añadir caso</button>
+              </div>
+              <sc-if value="{{ casoError }}" hint-placeholder-val="{{ false }}">
+                <span style="font-size:14px; line-height:20px; color:rgb(139,41,42);">Escribe el caso antes de añadirlo.</span>
+              </sc-if>
+            </div>
+            <span style="font-size:14px; line-height:20px; color:rgb(94,94,91);">{{ casosCount }}</span>
+          </section>
+        </sc-if>
+
+        <sc-if value="{{ isStep3 }}" hint-placeholder-val="{{ false }}">
+          <section style="display:flex; flex-direction:column; gap:24px; animation:fadeUp 320ms ease both;">
+            <h2 style="margin:0; font-family:'Uxum',Optima,'Gill Sans','Segoe UI',sans-serif; font-weight:400; font-size:clamp(28px,5vw,40px); line-height:1.15; color:rgb(11,51,46); text-wrap:pretty;">Cuatro territorios del discovery</h2>
+            <p style="margin:0; font-size:16px; line-height:24px; color:rgb(72,71,69);">¿Cuánto crees que merece la pena que profundicemos en cada uno? 1 es poco necesario, 5 es prioritario.</p>
+            <sc-for list="{{ territorios }}" as="t" hint-placeholder-count="4">
+              <div style="display:flex; flex-direction:column; gap:12px; border-top:1px solid rgb(232,229,220); padding-top:20px;">
+                <div style="display:flex; flex-direction:column; gap:4px;">
+                  <span style="font-size:13px; line-height:20px; letter-spacing:0.08em; text-transform:uppercase; color:rgb(94,94,91);">{{ t.kicker }}</span>
+                  <span style="font-family:'Uxum',Optima,'Gill Sans','Segoe UI',sans-serif; font-size:24px; line-height:30px; color:rgb(11,51,46);">{{ t.name }}</span>
+                  <span style="font-size:15px; line-height:22px; color:rgb(72,71,69);">{{ t.desc }}</span>
+                </div>
+                <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(56px,1fr)); gap:8px;">
+                  <sc-for list="{{ t.opts }}" as="o" hint-placeholder-count="5">
+                    <button type="button" onClick="{{ o.onClick }}" style="min-height:52px; border-radius:10px; cursor:pointer; font-size:16px; line-height:24px; transition:all 160ms ease; background:{{ o.bg }}; color:{{ o.fg }}; border:1px solid {{ o.bd }};" onMouseEnter="{{ o.onEnter }}" onMouseLeave="{{ o.onLeave }}">{{ o.value }}</button>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-for>
+          </section>
+        </sc-if>
+
+        <sc-if value="{{ isStep4 }}" hint-placeholder-val="{{ false }}">
+          <section style="display:flex; flex-direction:column; gap:20px; animation:fadeUp 320ms ease both;">
+            <h2 style="margin:0; font-family:'Uxum',Optima,'Gill Sans','Segoe UI',sans-serif; font-weight:400; font-size:clamp(28px,5vw,40px); line-height:1.15; color:rgb(11,51,46); text-wrap:pretty;">¿Qué necesitas para usar más IA?</h2>
+            <p style="margin:0; font-size:16px; line-height:24px; color:rgb(72,71,69);">Herramientas, métodos, formación, permisos, ejemplos de compañeros. Todo lo que se te ocurra vale.</p>
+            <textarea rows="7" value="{{ necesidades }}" onChange="{{ onNecesidades }}" placeholder="Escribe aquí…" style="width:100%; resize:vertical; padding:16px; border-radius:12px; border:1px solid rgb(232,229,220); background:rgb(255,255,255); font-size:16px; line-height:24px; color:rgb(30,30,30);"></textarea>
+            <span style="font-size:14px; line-height:20px; color:rgb(94,94,91);">{{ necesidadesCount }}</span>
+          </section>
+        </sc-if>
+
+        <sc-if value="{{ showRequired }}" hint-placeholder-val="{{ false }}">
+          <span style="font-size:14px; line-height:20px; color:rgb(139,41,42);">{{ requiredMsg }}</span>
+        </sc-if>
+
+        <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:center; padding-top:4px;">
+          <button type="button" onClick="{{ next }}" style="border:none; border-radius:100px; padding:16px 32px; min-height:52px; background:rgb(30,30,30); color:rgb(254,251,241); font-size:16px; line-height:24px; cursor:pointer; transition:background 160ms ease;" style-hover="background:rgb(11,51,46);">{{ nextLabel }}</button>
+          <button type="button" onClick="{{ back }}" style="border:1px solid rgb(94,94,91); border-radius:100px; padding:16px 28px; min-height:52px; background:rgb(254,251,241); color:rgb(30,30,30); font-size:16px; line-height:24px; cursor:pointer; transition:background 160ms ease;" style-hover="background:rgb(243,240,231);">Atrás</button>
+          <sc-if value="{{ canSkip }}" hint-placeholder-val="{{ false }}">
+            <button type="button" onClick="{{ skip }}" style="border:none; background:none; padding:12px 4px; color:rgb(94,94,91); font-size:16px; line-height:24px; cursor:pointer; text-decoration:underline; text-underline-offset:3px; transition:color 160ms ease;" style-hover="color:rgb(30,30,30);">Saltar</button>
+          </sc-if>
+        </div>
+      </div>
+    </main>
+  </sc-if>
+
+  <sc-if value="{{ isSending }}" hint-placeholder-val="{{ false }}">
+    <main style="flex:1; display:flex; align-items:center; justify-content:center; padding:64px 24px;">
+      <div style="display:flex; flex-direction:column; align-items:center; gap:16px;">
+        <span style="width:36px; height:36px; border-radius:50%; border:3px solid rgb(232,229,220); border-top-color:rgb(11,51,46); animation:spin 800ms linear infinite;"></span>
+        <span style="font-size:16px; line-height:24px; color:rgb(72,71,69);">Enviando tus respuestas…</span>
+      </div>
+    </main>
+  </sc-if>
+
+  <sc-if value="{{ isDone }}" hint-placeholder-val="{{ false }}">
+    <main style="flex:1; display:flex; align-items:center; justify-content:center; padding:clamp(32px,7vw,96px) clamp(20px,5vw,64px);">
+      <div style="width:100%; max-width:620px; display:flex; flex-direction:column; gap:28px; animation:fadeUp 420ms ease both;">
+        <span style="position:relative; width:72px; height:72px; display:flex; align-items:center; justify-content:center; font-size:24px; line-height:1; color:rgb(11,51,46);"><span style="position:absolute; inset:0; background:rgb(100,227,180); -webkit-mask:url(assets/shape-07.svg) center/contain no-repeat; mask:url(assets/shape-07.svg) center/contain no-repeat;"></span></span>
+        <h1 style="margin:0; font-family:'Uxum',Optima,'Gill Sans','Segoe UI',sans-serif; font-weight:400; font-size:clamp(36px,7vw,56px); line-height:1.1; color:rgb(11,51,46); text-wrap:pretty;">Gracias por responder</h1>
+        <p style="margin:0; font-size:18px; line-height:28px; color:rgb(72,71,69); max-width:50ch; text-wrap:pretty;">Ya está registrado. Con esto y el resto de respuestas montamos el mapa de visión y habilidades, y lo compartimos con toda la compañía.</p>
+        <div style="border:1px solid rgb(232,229,220); border-radius:16px; background:rgb(254,251,241); padding:24px; display:flex; flex-direction:column; gap:12px;">
+          <span style="font-size:14px; line-height:20px; letter-spacing:0.08em; text-transform:uppercase; color:rgb(94,94,91);">Tu resumen</span>
+          <div style="display:flex; flex-wrap:wrap; gap:24px;">
+            <div style="display:flex; flex-direction:column; gap:2px;"><span style="font-family:'Uxum',Optima,'Gill Sans','Segoe UI',sans-serif; font-size:32px; line-height:40px; color:rgb(11,51,46);">{{ summaryInteres }}</span><span style="font-size:14px; line-height:20px; color:rgb(94,94,91);">Interés</span></div>
+            <div style="display:flex; flex-direction:column; gap:2px;"><span style="font-family:'Uxum',Optima,'Gill Sans','Segoe UI',sans-serif; font-size:32px; line-height:40px; color:rgb(11,51,46);">{{ summaryCasos }}</span><span style="font-size:14px; line-height:20px; color:rgb(94,94,91);">Casos de uso</span></div>
+            <div style="display:flex; flex-direction:column; gap:2px;"><span style="font-family:'Uxum',Optima,'Gill Sans','Segoe UI',sans-serif; font-size:32px; line-height:40px; color:rgb(11,51,46);">{{ summaryTerritorios }}</span><span style="font-size:14px; line-height:20px; color:rgb(94,94,91);">Territorios votados</span></div>
+          </div>
+        </div>
+        <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:center;">
+          <button type="button" onClick="{{ restart }}" style="border:1px solid rgb(94,94,91); border-radius:100px; padding:16px 28px; min-height:52px; background:rgb(254,251,241); color:rgb(30,30,30); font-size:16px; line-height:24px; cursor:pointer;" style-hover="background:rgb(243,240,231);">Enviar otra respuesta</button>
+        </div>
+      </div>
+    </main>
+  </sc-if>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;admin&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Administración&quot;,&quot;label&quot;:&quot;Modo administrador (botón de descarga)&quot;}}">
+const TERRITORIOS = [
+  { id: "t1", kicker: "Territorio 01", name: "Nombre pendiente", desc: "Hipótesis del discovery, por definir." },
+  { id: "t2", kicker: "Territorio 02", name: "Nombre pendiente", desc: "Hipótesis del discovery, por definir." },
+  { id: "t3", kicker: "Territorio 03", name: "Nombre pendiente", desc: "Hipótesis del discovery, por definir." },
+  { id: "t4", kicker: "Territorio 04", name: "Nombre pendiente", desc: "Hipótesis del discovery, por definir." }
+];
+const TAGS = ["Uso personal", "Proyecto con cliente"];
+const EQUIPOS = [
+  { label: "CX / DX / Estrategia", on: "rgb(100,227,180)", off: "rgb(223,246,229)", bd: "rgb(79,168,135)", fg: "rgb(58,109,90)" },
+  { label: "CRM & Loyalty", on: "rgb(100,191,227)", off: "rgb(223,239,238)", bd: "rgb(79,143,168)", fg: "rgb(58,94,109)" },
+  { label: "Data & Growth / Tech", on: "rgb(150,114,239)", off: "rgb(233,224,241)", bd: "rgb(114,89,176)", fg: "rgb(78,64,114)" },
+  { label: "Creatividad", on: "rgb(255,110,58)", off: "rgb(254,223,204)", bd: "rgb(187,86,50)", fg: "rgb(120,62,41)" },
+  { label: "Dirección", on: "rgb(255,219,58)", off: "rgb(254,245,204)", bd: "rgb(162,141,44)", fg: "rgb(139,121,41)" }
+];
+
+class Component extends DCLogic {
+  state = {
+    screen: "welcome", step: 1,
+    interes: null, equipo: null,
+    casos: [], draftTexto: "", draftTag: TAGS[0], casoError: false,
+    votos: {}, necesidades: "", hover: null,
+    showRequired: false, requiredMsg: ""
+  };
+
+  go(step) { this.setState({ step, showRequired: false }); window.scrollTo(0, 0); }
+
+  storageKey = "ia-oag-respuestas";
+
+  componentDidMount() {
+    this.onKey = (e) => {
+      if (this.props.admin !== true) return;
+      const t = e.target;
+      const tag = t && t.tagName;
+      if (tag === "TEXTAREA" || tag === "INPUT" || (t && t.isContentEditable)) return;
+      if (e.shiftKey && (e.key === "D" || e.key === "d")) { e.preventDefault(); this.downloadCsv(); }
+    };
+    window.addEventListener("keydown", this.onKey);
+  }
+
+  componentWillUnmount() { window.removeEventListener("keydown", this.onKey); }
+
+  loadAll() {
+    try { return JSON.parse(localStorage.getItem(this.storageKey) || "[]"); } catch (e) { return []; }
+  }
+
+  saveAnswer() {
+    const s = this.state;
+    const row = {
+      fecha: new Date().toISOString(),
+      equipo: s.equipo || "",
+      interes: s.interes === null ? "" : s.interes,
+      casos: s.casos.map(c => c.texto + " [" + c.tag + "]").join(" | "),
+      t1: s.votos.t1 === undefined ? "" : s.votos.t1,
+      t2: s.votos.t2 === undefined ? "" : s.votos.t2,
+      t3: s.votos.t3 === undefined ? "" : s.votos.t3,
+      t4: s.votos.t4 === undefined ? "" : s.votos.t4,
+      necesidades: s.necesidades.trim()
+    };
+    const all = this.loadAll().concat(row);
+    try { localStorage.setItem(this.storageKey, JSON.stringify(all)); } catch (e) {}
+    this.setState({ total: all.length });
+    this.sendToSheets(row);
+  }
+
+  sendToSheets(row) {
+    const url = "https://script.google.com/macros/s/AKfycbzQIwOStAyJrfCqBSc6BYQCWJ7izgh1TlNnXDwrIqXH3wRQNx2fs9_mSgNOAE_kLTt0/exec";
+    fetch(url, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(row)
+    }).catch(() => {});
+  }
+
+  downloadCsv = () => {
+    const cols = ["fecha", "equipo", "interes", "casos", "t1", "t2", "t3", "t4", "necesidades"];
+    const head = ["Fecha", "Equipo", "Interes IA (1-5)", "Casos de uso", "Territorio 01", "Territorio 02", "Territorio 03", "Territorio 04", "Necesidades"];
+    const esc = (v) => '"' + String(v === undefined ? "" : v).replace(/"/g, '""') + '"';
+    const rows = this.loadAll().map(r => cols.map(c => esc(r[c])).join(";"));
+    const csv = "\uFEFF" + [head.map(esc).join(";")].concat(rows).join("\r\n");
+    const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8;" }));
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "ia-oag-strategy-respuestas.csv";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  };
+
+  submit() {
+    this.saveAnswer();
+    this.setState({ screen: "sending", showRequired: false });
+    window.scrollTo(0, 0);
+    setTimeout(() => this.setState({ screen: "done" }), 1100);
+  }
+
+  next = () => {
+    const s = this.state;
+    if (s.step === 1 && s.equipo === null) return this.setState({ showRequired: true, requiredMsg: "Marca tu equipo para continuar." });
+    if (s.step === 1 && s.interes === null) return this.setState({ showRequired: true, requiredMsg: "Elige un nivel del 1 al 5 para continuar." });
+    if (s.step === 3 && TERRITORIOS.some(t => s.votos[t.id] === undefined)) return this.setState({ showRequired: true, requiredMsg: "Vota los cuatro territorios para continuar." });
+    if (s.step === 4) return this.submit();
+    this.go(s.step + 1);
+  };
+
+  back = () => {
+    if (this.state.step === 1) { this.setState({ screen: "welcome", showRequired: false }); window.scrollTo(0, 0); return; }
+    this.go(this.state.step - 1);
+  };
+
+  skip = () => { if (this.state.step === 4) return this.submit(); this.go(this.state.step + 1); };
+
+  addCaso = () => {
+    const s = this.state;
+    if (s.draftTexto.trim() === "") return this.setState({ casoError: true });
+    this.setState(st => ({
+      casos: st.casos.concat({ texto: st.draftTexto.trim(), tag: st.draftTag }),
+      draftTexto: "", casoError: false
+    }));
+  };
+
+  renderVals() {
+    const s = this.state;
+    const dark = (c, amt) => "color-mix(in oklab, " + c + ", black " + amt + "%)";
+    const hov = (k) => ({
+      onEnter: () => this.setState({ hover: k }),
+      onLeave: () => this.setState(st => (st.hover === k ? { hover: null } : null))
+    });
+    const sel = (on, k) => {
+      const h = s.hover === k;
+      let bg = on ? "rgb(30,30,30)" : "rgb(254,251,241)";
+      let bd = on ? "rgb(30,30,30)" : "rgb(232,229,220)";
+      if (h) { bg = dark(bg, on ? 30 : 8); bd = dark(bd, on ? 30 : 16); }
+      return Object.assign({ bg, bd, fg: on ? "rgb(254,251,241)" : "rgb(30,30,30)" }, hov(k));
+    };
+
+    const equipoOpts = EQUIPOS.map(e => {
+      const on = s.equipo === e.label;
+      const k = "eq-" + e.label;
+      let bg = on ? e.on : e.off;
+      let bd = on ? e.bd : e.off;
+      if (s.hover === k) { bg = dark(bg, 9); bd = dark(e.bd, 9); }
+      return Object.assign({ label: e.label, bg, bd, fg: e.fg,
+        onClick: () => this.setState({ equipo: e.label, showRequired: false }) }, hov(k));
+    });
+
+    const interesOpts = [1, 2, 3, 4, 5].map(v => ({
+      value: v, ...sel(s.interes === v, "int-" + v),
+      onClick: () => this.setState({ interes: v, showRequired: false })
+    }));
+
+    const casos = s.casos.map((c, i) => ({
+      texto: c.texto, tag: c.tag,
+      tagBg: c.tag === TAGS[0] ? "rgb(223,246,229)" : "rgb(254,223,204)",
+      tagFg: c.tag === TAGS[0] ? "rgb(58,109,90)" : "rgb(120,62,41)",
+      onRemove: () => this.setState(st => ({ casos: st.casos.filter((_, j) => j !== i) }))
+    }));
+
+    const tagOpts = TAGS.map(label => ({
+      label, ...sel(s.draftTag === label, "tag-" + label),
+      onClick: () => this.setState({ draftTag: label })
+    }));
+
+    const territorios = TERRITORIOS.map(t => ({
+      kicker: t.kicker, name: t.name, desc: t.desc,
+      opts: [1, 2, 3, 4, 5].map(v => ({
+        value: v, ...sel(s.votos[t.id] === v, t.id + "-" + v),
+        onClick: () => this.setState(st => ({ votos: Object.assign({}, st.votos, { [t.id]: v }), showRequired: false }))
+      }))
+    }));
+
+    const votados = TERRITORIOS.filter(t => s.votos[t.id] !== undefined).length;
+
+    return {
+      isWelcome: s.screen === "welcome",
+      isForm: s.screen === "form",
+      isSending: s.screen === "sending",
+      isDone: s.screen === "done",
+      isStep1: s.step === 1, isStep2: s.step === 2, isStep3: s.step === 3, isStep4: s.step === 4,
+      stepLabel: String(s.step),
+      progressLabel: Math.round((s.step / 4) * 100) + "%",
+      progressWidth: (s.step / 4) * 100 + "%",
+      interesOpts, equipoOpts, casos, tagOpts, territorios,
+      summaryEquipo: s.equipo === null ? "—" : s.equipo,
+      casoError: s.casoError,
+      casosCount: s.casos.length === 0 ? "Aún no has añadido ninguno. Puedes saltar este bloque." : s.casos.length + (s.casos.length === 1 ? " caso añadido" : " casos añadidos"),
+      draftTexto: s.draftTexto,
+      onDraftTexto: (e) => this.setState({ draftTexto: e.target.value, casoError: false }),
+      addCaso: this.addCaso,
+      necesidades: s.necesidades,
+      necesidadesCount: s.necesidades.length > 0 ? s.necesidades.length + " caracteres" : "Puedes dejarlo en blanco",
+      onNecesidades: (e) => this.setState({ necesidades: e.target.value }),
+      showRequired: s.showRequired,
+      requiredMsg: s.requiredMsg,
+      canSkip: s.step === 2 || s.step === 4,
+      nextLabel: s.step === 4 ? "Enviar respuestas" : "Siguiente",
+      next: this.next,
+      back: this.back,
+      skip: this.skip,
+      start: () => { this.setState({ screen: "form", step: 1 }); window.scrollTo(0, 0); },
+      restart: () => this.setState({ screen: "welcome", step: 1, interes: null, casos: [], draftTexto: "", draftTag: TAGS[0], casoError: false, votos: {}, necesidades: "", hover: null, showRequired: false }),
+      summaryInteres: s.interes === null ? "—" : s.interes + "/5",
+      summaryCasos: String(s.casos.length),
+      summaryTerritorios: votados + "/4",
+      totalRespuestas: String(s.total || this.loadAll().length),
+      isAdmin: this.props.admin === true,
+      downloadCsv: this.downloadCsv
+    };
+  }
+}
+
+</script>
+</body>
+</html>
